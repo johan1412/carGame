@@ -45,6 +45,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_button"
         android:minWidth="130dp"
+        android:onClick="clickStart"
         android:text="start"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -77,5 +78,50 @@
         app:layout_constraintTop_toBottomOf="@+id/titre"
         app:layout_constraintVertical_bias="0.060000002"
         app:srcCompat="@drawable/ic_start_flag" />
+
+    <ImageView
+        android:id="@+id/voiture1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/voiture2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/reglageButton"
+        app:srcCompat="@drawable/ic_voitures_menu" />
+
+    <ImageView
+        android:id="@+id/voiture2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/voiture3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/voiture1"
+        app:layout_constraintTop_toBottomOf="@+id/reglageButton"
+        app:srcCompat="@drawable/ic_voitures_menu" />
+
+    <ImageView
+        android:id="@+id/voiture4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/voiture3"
+        app:layout_constraintTop_toBottomOf="@+id/startButton"
+        app:srcCompat="@drawable/ic_voitures_menu" />
+
+    <ImageView
+        android:id="@+id/voiture3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/voiture4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/voiture2"
+        app:layout_constraintTop_toBottomOf="@+id/startButton"
+        app:srcCompat="@drawable/ic_voitures_menu" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
