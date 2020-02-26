@@ -13,6 +13,7 @@
             android:name=".CourseActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_course"
+            android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme" />
         <activity
             android:name=".MainActivity"
