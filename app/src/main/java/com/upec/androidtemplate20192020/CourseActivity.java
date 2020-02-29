@@ -1,25 +1,33 @@
 package com.upec.androidtemplate20192020;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import java.util.ArrayList;
 
 
 public class CourseActivity extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor capteur;
+    private Thread courseThread;
+    private Thread timerThread;
     private Ecran ecran;
     private Chronometer chrono;
-    private Boolean finished = false;
     private int SPEED;
+    private boolean firstMove;
+    private boolean fin;
+    private TextView tv;
+    private ProgressBar pb;
+    private View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,30 +37,89 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
         sensorManager = (SensorManager)getSystemService(this.SENSOR_SERVICE);
         capteur = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-        TextView tv = findViewById(R.id.cmp_depart);
+        this.pb = findViewById(R.id.progressBar);
+        this.SPEED = 1;
+        ecran = findViewById(R.id.ecran);
+        this.view = ecran.getView();
+        this.firstMove = true;
+
+        Button speedB = findViewById(R.id.moveButton);
+        speedB.setEnabled(false);
+        speedB.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                speedClick();
+                if(motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                    SPEED++;
+                } else if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    SPEED--;
+                }
+                return true;
+            }
+        });
+
+        this.tv = findViewById(R.id.cmp_depart);
         CmpTask task = new CmpTask(tv);
         task.execute();
 
         this.chrono = findViewById(R.id.timer);
-        TimerRunnable timer = new TimerRunnable(chrono);
-        new Thread(timer).start();
+        TimerRunnable timer = new TimerRunnable(chrono, this, speedB);
+        this.timerThread = new Thread(timer);
+        timerThread.start();
     }
+
+
 
     public boolean isFinish() {
-        return this.finished;
+        return this.fin;
     }
 
-    public void setFinish(boolean b) {
-        this.finished = b;
+
+
+    public void setFinish() {
+        timerThread.interrupt();
+        chrono.stop();
+        courseThread.interrupt();
+        tv.setText("Finish");
+        this.fin = true;
     }
+
+
+
+    public int getSPEED() {
+        return this.SPEED;
+    }
+
+
+
+    public void setProgressBar(int i) {
+        pb.setProgress(i);
+    }
+
+
+
+    public void printObstacles(ArrayList<Obstacle> listO) {
+        ecran.drawObs(listO);
+    }
+
+
+
+    public void speedClick() {
+        if(this.firstMove) {
+            ThreadCourse course = new ThreadCourse(this, view.getWidth(), view.getHeight());
+            this.courseThread = new Thread(course);
+            courseThread.start();
+            this.firstMove = false;
+        }
+        this.SPEED++;
+    }
+
+
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        ecran = findViewById(R.id.ecran);
-        View v = ecran.getView();
-        int w = v.getWidth();
         float x = event.values[1];
-        ecran.setCarPos(x*(w/20));
+        ecran.setCarPos(x);
     }
 
     @Override
@@ -60,17 +127,23 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
     }
 
+
+
     @Override
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
     }
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
         sensorManager.registerListener(this, capteur, SensorManager.SENSOR_DELAY_UI);
     }
+
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -81,6 +154,8 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
             showSystemUI();
         }
     }
+
+
 
     private void hideSystemUI() {
         // Enables regular immersive mode.
@@ -97,52 +172,13 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
+
+
     private void showSystemUI() {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-    }
-}
-
-
-
-
-class CmpTask extends AsyncTask<Void, Integer, Void> {
-    TextView tv;
-
-    public CmpTask(TextView tv) {
-        super();
-        this.tv = tv;
-    }
-
-    @Override
-    protected Void doInBackground(Void... v) {
-        for(int i=3; i >= 0; i--) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            publishProgress(i);
-        }
-        return null;
-    }
-
-    @Override
-    public void onProgressUpdate(Integer... i) {
-        tv.setText(Integer.toString(i[0]));
-    }
-
-    @Override
-    protected void onPostExecute(Void v) {
-        tv.setText("PARTEZ");
-        /*try {
-            Thread.sleep(500);
-            tv.setVisibility(View.INVISIBLE);
-        } catch(InterruptedException e) {
-            e.printStackTrace();
-        }*/
     }
 }

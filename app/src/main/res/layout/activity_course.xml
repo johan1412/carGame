@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/speed_button"
         android:text="SPEED"
-        android:textColor="#FAFFFFFF"
+        android:textColor="#000000"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/ecran"
@@ -60,11 +60,12 @@
 
     <ProgressBar
         android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
+        style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/cardview_light_background"
         android:minWidth="150dp"
+        android:minHeight="10dp"
         android:rotation="270"
         app:layout_constraintBottom_toBottomOf="@+id/ecran"
         app:layout_constraintEnd_toEndOf="parent"

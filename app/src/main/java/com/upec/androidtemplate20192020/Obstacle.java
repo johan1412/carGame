@@ -1,37 +1,39 @@
 package com.upec.androidtemplate20192020;
 
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class Obstacle {
-    private Rect obstacle;
+    private Rect rectangle;
     private int color;
 
     public Obstacle(Rect rectangle) {
-        this.obstacle = rectangle;
-        this.color = Color.RED;
+        this.rectangle = rectangle;
+        this.color = Color.GREEN;
     }
 
-    public Rect getObstacle() {
-        return obstacle;
+
+    public int getY() {
+        return rectangle.top;
+    }
+
+    public void setY(int y) {
+        rectangle.top = y;
+        rectangle.bottom = y + 150;
+    }
+
+    public Rect getRectangle() {
+        return this.rectangle;
     }
 
     public boolean collision(Player player) {
-        if(obstacle.contains(player.getPlayer().left, player.getPlayer().top)
-            || obstacle.contains(player.getPlayer().right, player.getPlayer().top)
-            || obstacle.contains(player.getPlayer().left, player.getPlayer().bottom)
-            || obstacle.contains(player.getPlayer().left, player.getPlayer().bottom)) {
+        if(rectangle.contains(player.getPlayer().left, player.getPlayer().top)
+            || rectangle.contains(player.getPlayer().right, player.getPlayer().top)
+            || rectangle.contains(player.getPlayer().left, player.getPlayer().bottom)
+            || rectangle.contains(player.getPlayer().left, player.getPlayer().bottom)) {
             return true;
         } else {
             return false;
         }
-    }
-
-    public void draw(Canvas canvas) {
-        Paint paint = new Paint();
-        paint.setColor(color);
-        canvas.drawRect(obstacle, paint);
     }
 }
