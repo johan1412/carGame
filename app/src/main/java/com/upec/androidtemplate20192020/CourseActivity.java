@@ -1,6 +1,7 @@
 package com.upec.androidtemplate20192020;
 
 import androidx.appcompat.app.AppCompatActivity;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.ArrayList;
@@ -20,14 +22,18 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
     private Sensor capteur;
     private Thread courseThread;
     private Thread timerThread;
+    private int lives;
     private Ecran ecran;
     private Chronometer chrono;
     private int SPEED;
     private boolean firstMove;
     private boolean fin;
     private TextView tv;
+    private TextView speedView;
     private ProgressBar pb;
     private View view;
+    private ImageView img;
+    private int posPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +43,16 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
         sensorManager = (SensorManager)getSystemService(this.SENSOR_SERVICE);
         capteur = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
+        img = findViewById(R.id.mainCar);
+        img.setImageResource(R.drawable.main_car);
+        img.setMaxHeight(150);
+        img.setMaxWidth(80);
+
         this.pb = findViewById(R.id.progressBar);
-        this.SPEED = 1;
-        ecran = findViewById(R.id.ecran);
+        this.SPEED = 0;
+        this.lives = 3;
+        this.ecran = findViewById(R.id.ecran);
+        this.speedView = findViewById(R.id.viewSpeed);
         this.view = ecran.getView();
         this.firstMove = true;
 
@@ -48,11 +61,24 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
         speedB.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                speedClick();
-                if(motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                    SPEED++;
+                if(firstMove) {
+                    newCourse();
+                    firstMove = false;
+                }
+                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    /*if (SPEED < 5) {
+                        SPEED++;
+                        speedView.setText("Speed : " + SPEED);
+                    }*/
+                    SPEED = 3;
+                    speedView.setText("Speed : 1");
                 } else if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    SPEED--;
+                    /*if(SPEED > 0) {
+                        SPEED--;
+                        speedView.setText("Speed : " + SPEED);
+                    }*/
+                    SPEED = 0;
+                    speedView.setText("Speed : 0");
                 }
                 return true;
             }
@@ -66,6 +92,14 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
         TimerRunnable timer = new TimerRunnable(chrono, this, speedB);
         this.timerThread = new Thread(timer);
         timerThread.start();
+    }
+
+
+
+    public void newCourse() {
+        ThreadCourse course = new ThreadCourse(this, view.getWidth(), view.getHeight(), getResources());
+        courseThread = new Thread(course);
+        courseThread.start();
     }
 
 
@@ -92,6 +126,44 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
 
 
+    public void collision() {
+        this.lives--;
+        tv.setText("Accident ! \n -1 vie");
+        TextView livesView = findViewById(R.id.viewLives);
+        livesView.setText("Lives : " + lives);
+        TextView speedView = findViewById(R.id.viewSpeed);
+        speedView.setText("Speed : " + SPEED);
+        try {
+            courseThread.sleep(1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(this.lives > 0) {
+            relance();
+        } else {
+            gameOver();
+        }
+    }
+
+
+
+    public void gameOver() {
+        tv.setTextColor(Color.RED);
+        tv.setText("GAME OVER");
+        timerThread.interrupt();
+        chrono.stop();
+        courseThread.interrupt();
+        this.fin = true;
+    }
+
+
+
+    public void relance() {
+        tv.setText("");
+    }
+
+
+
     public void setProgressBar(int i) {
         pb.setProgress(i);
     }
@@ -104,23 +176,24 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
 
 
-    public void speedClick() {
-        if(this.firstMove) {
-            ThreadCourse course = new ThreadCourse(this, view.getWidth(), view.getHeight());
-            this.courseThread = new Thread(course);
-            courseThread.start();
-            this.firstMove = false;
-        }
-        this.SPEED++;
+    public int getPosPlayer() {
+        return this.posPlayer;
     }
 
 
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float x = event.values[1];
-        ecran.setCarPos(x);
+        int x = (int)event.values[1];
+        int posX = (int)img.getX();
+        int new_pos = (posX + (x * 20));
+        this.posPlayer = new_pos;
+        if((posX > (view.getWidth()/4) + 40) && (posX < (view.getHeight()/4) - 40)) {
+            img.setX(new_pos);
+        }
     }
+
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#086E77"
+    android:background="@drawable/background2"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
@@ -14,8 +14,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Super Car"
-        android:textColor="#FCFFFFFF"
-        android:textSize="80dp"
+        android:textColor="#FD9C22"
+        android:textSize="130dp"
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -28,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_button"
+        android:drawableTop="@drawable/ic_settings"
         android:minWidth="130dp"
         android:text="settings"
         android:textSize="18sp"
@@ -36,14 +37,14 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.100000024" />
+        app:layout_constraintTop_toBottomOf="@+id/titre" />
 
     <Button
         android:id="@+id/startButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_button"
+        android:drawableTop="@drawable/ic_start_flag"
         android:minWidth="130dp"
         android:onClick="clickStart"
         android:text="start"
@@ -52,76 +53,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/reglageButton"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
-        app:layout_constraintVertical_bias="0.100000024" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView2"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titre"
-        app:layout_constraintVertical_bias="0.060000002"
-        app:srcCompat="@drawable/ic_settings" />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/titre"
-        app:layout_constraintVertical_bias="0.060000002"
-        app:srcCompat="@drawable/ic_start_flag" />
-
-    <ImageView
-        android:id="@+id/voiture1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/voiture2"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reglageButton"
-        app:srcCompat="@drawable/ic_voitures_menu" />
-
-    <ImageView
-        android:id="@+id/voiture2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/voiture3"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/voiture1"
-        app:layout_constraintTop_toBottomOf="@+id/reglageButton"
-        app:srcCompat="@drawable/ic_voitures_menu" />
-
-    <ImageView
-        android:id="@+id/voiture4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/voiture3"
-        app:layout_constraintTop_toBottomOf="@+id/startButton"
-        app:srcCompat="@drawable/ic_voitures_menu" />
-
-    <ImageView
-        android:id="@+id/voiture3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/voiture4"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/voiture2"
-        app:layout_constraintTop_toBottomOf="@+id/startButton"
-        app:srcCompat="@drawable/ic_voitures_menu" />
+        app:layout_constraintTop_toBottomOf="@+id/titre" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

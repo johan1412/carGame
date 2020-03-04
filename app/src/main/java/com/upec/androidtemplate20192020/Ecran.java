@@ -10,17 +10,16 @@ import java.util.ArrayList;
 
 
 public class Ecran extends View {
-    float carPosX;
-    int carColor;
-    int borderColor;
-    ArrayList<Obstacle> list;
-    View view;
+    private int carColor;
+    private int borderColor;
+    private ArrayList<Obstacle> list;
+    private View view;
+    private int carPosX;
 
 
 
     public Ecran(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.carPosX = getWidth()/2;
         this.carColor = Color.RED;
         this.borderColor = Color.rgb(20, 20, 20);
         this.view = this;
@@ -35,20 +34,6 @@ public class Ecran extends View {
 
 
 
-    public void setCarPos(float x) {
-        float width = getWidth();
-        if(x < (- width/4)) {
-            carPosX = width/4 + 40;
-        } else if(x > width/4){
-            carPosX = width - (width/4) - 40;
-        } else {
-            carPosX = x + width/2;
-        }
-        invalidate();
-    }
-
-
-
     public void drawObs(ArrayList<Obstacle> list) {
         this.list = list;
         invalidate();
@@ -59,17 +44,14 @@ public class Ecran extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        int width = getWidth();
+        int height = getHeight();
         Paint paint = new Paint();
-        int w = getWidth();
-        float h = getHeight();
         paint.setColor(this.borderColor);
-        canvas.drawRect(0, 0, w/6, h, paint);
-        canvas.drawRect(w-(w/6), 0, w, h, paint);
-        paint.setColor(this.carColor);
-        canvas.drawRect(carPosX-40, h-250, carPosX+40, h-100, paint);
-        paint.setColor(Color.GREEN);
+        canvas.drawRect(0, 0, width/6, height, paint);
+        canvas.drawRect(width-(width/6), 0, width, height, paint);
         for(Obstacle o : list) {
-            canvas.drawRect(o.getRectangle(), paint);
+            canvas.drawBitmap(o.getBitmap(), o.getX(), o.getY(), paint);
         }
     }
 }

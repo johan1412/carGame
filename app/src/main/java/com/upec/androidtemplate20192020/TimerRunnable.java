@@ -17,6 +17,8 @@ public class TimerRunnable implements Runnable {
 
     @Override
     public void run() {
+        // Moves the current Thread into the background
+        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
         for(int i=0; i < 4; i++) {
             try {
                 Thread.sleep(1000);
