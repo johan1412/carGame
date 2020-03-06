@@ -4,11 +4,34 @@ import android.os.AsyncTask;
 import android.widget.TextView;
 
 public class CmpTask extends AsyncTask<Void, Integer, Void> {
-    TextView tv;
+    private TextView tv;
+    private TextView textLevel;
+    private int level;
 
-    public CmpTask(TextView tv) {
+    public CmpTask(TextView tv, TextView textLevel, int level) {
         super();
         this.tv = tv;
+        this.textLevel = textLevel;
+        this.level = level;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        String s = "";
+        if(level == 0) {
+            s = "Test mode";
+            textLevel.setText(s);
+        } else if(level == 1) {
+            s = "Easy level";
+            textLevel.setText(s);
+        } else if(level == 2) {
+            s = "Medium level";
+            textLevel.setText(s);
+        } else {
+            s = "Difficult level";
+            textLevel.setText(s);
+        }
     }
 
     @Override
@@ -27,14 +50,17 @@ public class CmpTask extends AsyncTask<Void, Integer, Void> {
     @Override
     public void onProgressUpdate(Integer... i) {
         if(i[0] == 0 || i[0] == -1) {
-            tv.setText("PARTEZ");
+            String s = "PARTEZ";
+            tv.setText(s);
         } else {
-            tv.setText(Integer.toString(i[0]));
+            String s = Integer.toString(i[0]);
+            tv.setText(s);
         }
     }
 
     @Override
     protected void onPostExecute(Void v) {
         tv.setText("");
+        textLevel.setText("");
     }
 }

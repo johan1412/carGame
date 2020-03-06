@@ -2,24 +2,27 @@ package com.upec.androidtemplate20192020;
 
 import android.content.res.Resources;
 import android.graphics.Rect;
-import android.widget.ImageView;
 import java.util.ArrayList;
 import java.util.Random;
 
+
 public class ThreadCourse implements Runnable {
-    CourseActivity course;
-    private ArrayList<Obstacle> obstacles;
-    int width, height, cycles;
+    private CourseActivity course;
+    private final ArrayList<Obstacle> obstacles;
+    private int width, height, cycles;
     private Resources res;
+    private int speed;
+    private boolean testMode;
 
 
-    public ThreadCourse(CourseActivity course, int width, int height, Resources res) {
+    public ThreadCourse(CourseActivity course, int width, int height, Resources res, boolean testMode) {
         this.course = course;
         this.obstacles = new ArrayList<>();
         this.width = width;
         this.height = height;
         this.cycles = 0;
         this.res = res;
+        this.testMode = testMode;
     }
 
 
@@ -29,35 +32,35 @@ public class ThreadCourse implements Runnable {
         // Moves the current Thread into the background
         android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
         int i = 1;
-        int speed;
         while (!course.isFinish()) {
             speed = course.getSPEED();
-            if ((cycles % 20 == 0) && (speed != 0)) {
+            if (cycles % 15 == 0) {
                 Random rand = new Random();
-                int x = rand.nextInt(((width - (width / 6)) - (width / 6))) + (width / 6);
-                Obstacle o = new Obstacle(res, x);
-                obstacles.add(o);
-            }
-            for (Obstacle obs : obstacles) {
-                if (obs.getY() > (height + 100)) {
-                    obstacles.remove(obs);
+                int x1 = rand.nextInt(((width - (width / 4)) - (width / 4))) + (width / 4);
+                Obstacle o1 = new Obstacle(res, x1);
+                int x2 = rand.nextInt(((width - (width / 4)) - (width / 4))) + (width / 4);
+                Obstacle o2 = new Obstacle(res, x2);
+                synchronized (obstacles) {
+                    obstacles.add(o1);
+                    obstacles.add(o2);
                 }
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(80);
             } catch (InterruptedException e) {
-                return;
+                e.printStackTrace();
             }
             int posPlayer = course.getPosPlayer();
+            double posPlayerY = height*0.94;
             for (Obstacle obst : obstacles) {
-                obst.setY(obst.getY() + (speed*5));
-                if (Rect.intersects(obst.getRect(), new Rect(posPlayer-40, height-250, posPlayer+40, height-100))) {
-                    course.collision();
-                    obstacles.remove(obst);
+                Rect p = new Rect(posPlayer-55, (int)posPlayerY-220, posPlayer+55, (int)posPlayerY);
+                if (Rect.intersects(obst.getRect(), p)) {
+                    update(i, true, obst);
                     break;
                 }
+                obst.setY(obst.getY() + 10 + (speed*30));
             }
-            update(i);
+            update(i, false, null);
             this.cycles++;
             if (cycles % 5 == 0) {
                 i = i+speed;
@@ -67,15 +70,24 @@ public class ThreadCourse implements Runnable {
 
 
 
-    private void update(final int i) {
+    private void update(final int i, final boolean collision, final Obstacle obs) {
         course.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                course.printObstacles(obstacles);
+                synchronized (obstacles) {
+                    course.printObstacles(obstacles);
+                    if (speed != 0) course.changeBackground();
+                    if (collision) {
+                        course.collision();
+                        obstacles.remove(obs);
+                    }
+                }
                 if(cycles%5 == 0) {
                     course.setProgressBar(i);
                 }
-                if(i >= 100) {
+                if(testMode && (i > 10)) {
+                    course.setFinish();
+                } else if(i > 100) {
                     course.setFinish();
                 }
             }

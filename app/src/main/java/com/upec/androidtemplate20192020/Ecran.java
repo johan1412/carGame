@@ -10,18 +10,15 @@ import java.util.ArrayList;
 
 
 public class Ecran extends View {
-    private int carColor;
     private int borderColor;
     private ArrayList<Obstacle> list;
     private View view;
-    private int carPosX;
-
+    private Paint paint = new Paint();
 
 
     public Ecran(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.carColor = Color.RED;
-        this.borderColor = Color.rgb(20, 20, 20);
+        this.borderColor = Color.rgb(50, 50, 50);
         this.view = this;
         this.list = new ArrayList<>();
     }
@@ -46,12 +43,13 @@ public class Ecran extends View {
         super.onDraw(canvas);
         int width = getWidth();
         int height = getHeight();
-        Paint paint = new Paint();
         paint.setColor(this.borderColor);
         canvas.drawRect(0, 0, width/6, height, paint);
         canvas.drawRect(width-(width/6), 0, width, height, paint);
-        for(Obstacle o : list) {
-            canvas.drawBitmap(o.getBitmap(), o.getX(), o.getY(), paint);
+        for (Obstacle o : list) {
+            if(o.getY() > 0) {
+                canvas.drawBitmap(o.getBitmap(), o.getX(), o.getY(), paint);
+            }
         }
     }
 }

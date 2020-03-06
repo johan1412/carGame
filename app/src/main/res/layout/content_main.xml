@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:text="Super Car"
         android:textColor="#FD9C22"
-        android:textSize="130dp"
+        android:textSize="110dp"
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -24,36 +24,80 @@
         app:layout_constraintVertical_bias="0.050000012" />
 
     <Button
-        android:id="@+id/reglageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_button"
-        android:drawableTop="@drawable/ic_settings"
-        android:minWidth="130dp"
-        android:text="settings"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/startButton"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titre" />
-
-    <Button
         android:id="@+id/startButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_button"
         android:drawableTop="@drawable/ic_start_flag"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:minWidth="130dp"
         android:onClick="clickStart"
         android:text="start"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/reglageButton"
+        app:layout_constraintHorizontal_bias="0.7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titre"
+        app:layout_constraintVertical_bias="0.25" />
+
+    <Button
+        android:id="@+id/buttonEasy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_button"
+        android:minWidth="200dp"
+        android:onClick="clickEasyButton"
+        android:text="Easy level"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonMedium"
+        app:layout_constraintEnd_toStartOf="@+id/startButton"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titre" />
+
+    <Button
+        android:id="@+id/buttonMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_button"
+        android:minWidth="200dp"
+        android:onClick="clickMediumButton"
+        android:text="Medium level"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDifficult"
+        app:layout_constraintEnd_toStartOf="@+id/startButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonEasy" />
+
+    <Button
+        android:id="@+id/buttonDifficult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_button"
+        android:minWidth="200dp"
+        android:onClick="clickDifficultButton"
+        android:text="Difficult level"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/startButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonMedium" />
+
+    <Button
+        android:id="@+id/buttonTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_button_test"
+        android:minWidth="150dp"
+        android:onClick="clickButtonTest"
+        android:text="Test mode"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/startButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

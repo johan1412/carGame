@@ -7,6 +7,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -30,27 +31,39 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
     private boolean fin;
     private TextView tv;
     private TextView speedView;
+    private ThreadCourse course;
     private ProgressBar pb;
     private View view;
+    private int level;
     private ImageView img;
     private int posPlayer;
+    private int tourMap;
+    private boolean testMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
 
+        Bundle b = getIntent().getExtras();
+        if(b.getInt("test") == 1) {
+            level = 0;
+            testMode = true;
+        } else {
+            level = b.getInt("level", 1);
+            testMode = false;
+        }
+
         sensorManager = (SensorManager)getSystemService(this.SENSOR_SERVICE);
         capteur = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         img = findViewById(R.id.mainCar);
         img.setImageResource(R.drawable.main_car);
-        img.setMaxHeight(150);
-        img.setMaxWidth(80);
 
         this.pb = findViewById(R.id.progressBar);
         this.SPEED = 0;
         this.lives = 3;
+        this.tourMap = 1;
         this.ecran = findViewById(R.id.ecran);
         this.speedView = findViewById(R.id.viewSpeed);
         this.view = ecran.getView();
@@ -66,17 +79,9 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
                     firstMove = false;
                 }
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    /*if (SPEED < 5) {
-                        SPEED++;
-                        speedView.setText("Speed : " + SPEED);
-                    }*/
-                    SPEED = 3;
+                    SPEED = level;
                     speedView.setText("Speed : 1");
                 } else if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    /*if(SPEED > 0) {
-                        SPEED--;
-                        speedView.setText("Speed : " + SPEED);
-                    }*/
                     SPEED = 0;
                     speedView.setText("Speed : 0");
                 }
@@ -85,7 +90,8 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
         });
 
         this.tv = findViewById(R.id.cmp_depart);
-        CmpTask task = new CmpTask(tv);
+        TextView tvLevel = findViewById(R.id.textLevel);
+        CmpTask task = new CmpTask(tv, tvLevel, level);
         task.execute();
 
         this.chrono = findViewById(R.id.timer);
@@ -97,7 +103,7 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
 
     public void newCourse() {
-        ThreadCourse course = new ThreadCourse(this, view.getWidth(), view.getHeight(), getResources());
+        this.course = new ThreadCourse(this, view.getWidth(), view.getHeight(), getResources(), testMode);
         courseThread = new Thread(course);
         courseThread.start();
     }
@@ -114,7 +120,8 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
         timerThread.interrupt();
         chrono.stop();
         courseThread.interrupt();
-        tv.setText("Finish");
+        String s = "Finish \n Gagné";
+        tv.setText(s);
         this.fin = true;
     }
 
@@ -128,17 +135,13 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
     public void collision() {
         this.lives--;
-        tv.setText("Accident ! \n -1 vie");
         TextView livesView = findViewById(R.id.viewLives);
-        livesView.setText("Lives : " + lives);
+        String s1 = "Lives : " + lives;
+        livesView.setText(s1);
         TextView speedView = findViewById(R.id.viewSpeed);
-        speedView.setText("Speed : " + SPEED);
-        try {
-            courseThread.sleep(1000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if(this.lives > 0) {
+        String s2 = "Speed : " + SPEED;
+        speedView.setText(s2);
+        if(lives > 0) {
             relance();
         } else {
             gameOver();
@@ -149,7 +152,8 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
     public void gameOver() {
         tv.setTextColor(Color.RED);
-        tv.setText("GAME OVER");
+        String s = "GAME OVER";
+        tv.setText(s);
         timerThread.interrupt();
         chrono.stop();
         courseThread.interrupt();
@@ -159,19 +163,32 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
 
     public void relance() {
-        tv.setText("");
+        courseThread.interrupt();
+        tv.setText("Accident ! \n -1 vie");
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                tv.setText("");
+                courseThread = new Thread(course);
+                courseThread.start();
+            }
+        }, 2000);
     }
 
 
 
     public void setProgressBar(int i) {
-        pb.setProgress(i);
+        if (testMode) {
+            pb.setProgress(i * 10);
+        } else {
+            pb.setProgress(i);
+        }
     }
 
 
 
-    public void printObstacles(ArrayList<Obstacle> listO) {
-        ecran.drawObs(listO);
+    public void printObstacles(ArrayList<Obstacle> obstacles) {
+        ecran.drawObs(obstacles);
     }
 
 
@@ -182,13 +199,28 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
 
 
+    public void changeBackground() {
+        switch (tourMap) {
+            case 1 : ecran.setBackgroundResource(R.drawable.map_course1); tourMap++; break;
+            case 2 : ecran.setBackgroundResource(R.drawable.map_course2); tourMap++; break;
+            case 3 : ecran.setBackgroundResource(R.drawable.map_course3); tourMap = 1; break;
+        }
+    }
+
+
+
     @Override
     public void onSensorChanged(SensorEvent event) {
-        int x = (int)event.values[1];
+        float width = view.getWidth();
+        float x = event.values[1];
         int posX = (int)img.getX();
-        int new_pos = (posX + (x * 20));
-        this.posPlayer = new_pos;
-        if((posX > (view.getWidth()/4) + 40) && (posX < (view.getHeight()/4) - 40)) {
+        float new_pos = (posX + (x * 20));
+        this.posPlayer = (int)new_pos;
+        if((posX < (width/4) + 40) && (new_pos <= posX)) {
+            img.setX(width/4);
+        } else if((posX > (width - (width/4)) - 40) && (new_pos >= posX)) {
+            img.setX(width - (width/4));
+        } else {
             img.setX(new_pos);
         }
     }
