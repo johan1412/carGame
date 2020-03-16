@@ -1,18 +1,19 @@
 package com.upec.androidtemplate20192020;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import android.graphics.Color;
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
     private Ecran ecran;
     private Chronometer chrono;
     private int SPEED;
-    private boolean firstMove;
     private boolean fin;
     private TextView tv;
     private TextView speedView;
@@ -39,6 +39,7 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
     private int posPlayer;
     private int tourMap;
     private boolean testMode;
+    private Button speedB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
         Bundle b = getIntent().getExtras();
         if(b.getInt("test") == 1) {
-            level = 0;
+            level = 1;
             testMode = true;
         } else {
             level = b.getInt("level", 1);
@@ -67,17 +68,12 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
         this.ecran = findViewById(R.id.ecran);
         this.speedView = findViewById(R.id.viewSpeed);
         this.view = ecran.getView();
-        this.firstMove = true;
 
-        Button speedB = findViewById(R.id.moveButton);
+        this.speedB = findViewById(R.id.moveButton);
         speedB.setEnabled(false);
         speedB.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                if(firstMove) {
-                    newCourse();
-                    firstMove = false;
-                }
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     SPEED = level;
                     speedView.setText("Speed : 1");
@@ -89,15 +85,42 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
             }
         });
 
-        this.tv = findViewById(R.id.cmp_depart);
-        TextView tvLevel = findViewById(R.id.textLevel);
-        CmpTask task = new CmpTask(tv, tvLevel, level);
-        task.execute();
+        LinearLayout gameOverText = findViewById(R.id.gameOver);
+        gameOverText.setVisibility(View.INVISIBLE);
+        AlertDialog.Builder alert = new AlertDialog.Builder(CourseActivity.this);
+        alert.setCancelable(false);
+        alert.setTitle("INFORMATIONS");
+        String s1 = "Pour avancer, restez APPUYÉ sur le bouton SPEED en bas à droite de l'écran.";
+        String s2 = "La JAUGE à gauche de l'écran indique votre AVANCÉE dans la course.";
+        String s3 = "Vous avez 3 vies, une fois arrivé à 0, c'est GAME OVER et vous devrez RECOMMENCER la partie.";
+        alert.setMessage(s1 + "\n\n" + s2 + "\n\n" + s3 + "\n");
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                lancementCompteur();
+                lancementChrono();
+                newCourse();
+            }
+        });
+        alert.show();
+    }
 
+
+
+    public void lancementChrono() {
         this.chrono = findViewById(R.id.timer);
         TimerRunnable timer = new TimerRunnable(chrono, this, speedB);
         this.timerThread = new Thread(timer);
         timerThread.start();
+    }
+
+
+
+    public void lancementCompteur() {
+        this.tv = findViewById(R.id.cmp_depart);
+        TextView tvLevel = findViewById(R.id.textLevel);
+        CmpTask task = new CmpTask(tv, tvLevel, level);
+        task.execute();
     }
 
 
@@ -151,9 +174,8 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
 
     public void gameOver() {
-        tv.setTextColor(Color.RED);
-        String s = "GAME OVER";
-        tv.setText(s);
+        LinearLayout gameOverText = findViewById(R.id.gameOver);
+        gameOverText.setVisibility(View.VISIBLE);
         timerThread.interrupt();
         chrono.stop();
         courseThread.interrupt();
@@ -163,16 +185,22 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
 
     public void relance() {
-        courseThread.interrupt();
+        //this.course = new ThreadCourse(this, view.getWidth(), view.getHeight(), getResources(), testMode);
         tv.setText("Accident ! \n -1 vie");
-        Handler handler = new Handler();
+        try {
+            courseThread.sleep(2000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        tv.setText("");
+        /*Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
+            @Override
             public void run() {
-                tv.setText("");
                 courseThread = new Thread(course);
                 courseThread.start();
             }
-        }, 2000);
+        }, 2000);*/
     }
 
 

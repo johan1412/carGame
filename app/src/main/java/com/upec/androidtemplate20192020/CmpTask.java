@@ -38,7 +38,7 @@ public class CmpTask extends AsyncTask<Void, Integer, Void> {
     protected Void doInBackground(Void... v) {
         for(int i=3; i >= -1; i--) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(700);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

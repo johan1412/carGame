@@ -31,14 +31,22 @@ public class ThreadCourse implements Runnable {
     public void run() {
         // Moves the current Thread into the background
         android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        for(int i=0; i < 4; i++) {
+            try {
+                Thread.sleep(700);
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
         int i = 1;
         while (!course.isFinish()) {
             speed = course.getSPEED();
-            if (cycles % 15 == 0) {
-                Random rand = new Random();
-                int x1 = rand.nextInt(((width - (width / 4)) - (width / 4))) + (width / 4);
+            if (cycles % 20 == 0) {
+                Random rand1 = new Random();
+                int x1 = rand1.nextInt(width / 4) + (width / 4) - 20;
                 Obstacle o1 = new Obstacle(res, x1);
-                int x2 = rand.nextInt(((width - (width / 4)) - (width / 4))) + (width / 4);
+                Random rand2 = new Random();
+                int x2 = rand2.nextInt(((width - (width / 4)) - (width / 2))) + (width / 2) + 20;
                 Obstacle o2 = new Obstacle(res, x2);
                 synchronized (obstacles) {
                     obstacles.add(o1);
@@ -56,7 +64,12 @@ public class ThreadCourse implements Runnable {
                 Rect p = new Rect(posPlayer-55, (int)posPlayerY-220, posPlayer+55, (int)posPlayerY);
                 if (Rect.intersects(obst.getRect(), p)) {
                     update(i, true, obst);
-                    break;
+                    /*try {
+                        Thread.sleep(5000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;*/
                 }
                 obst.setY(obst.getY() + 10 + (speed*30));
             }
