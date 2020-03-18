@@ -142,7 +142,7 @@
         android:id="@+id/gameOver"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#CBDACFCF"
+        android:background="#F2E6DEDE"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -155,31 +155,121 @@
             android:layout_height="wrap_content"
             android:text="GAME OVER"
             android:textColor="#FCFF0005"
-            android:textSize="80sp"
+            android:textSize="80dp"
             tools:layout_editor_absoluteX="399dp"
             tools:layout_editor_absoluteY="330dp" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="90dp">
+
+            <TextView
+                android:id="@+id/emptyView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textSize="8sp" />
 
             <Button
                 android:id="@+id/mainPageButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toStartOf="@id/emptyView"
+                android:onClick="clickMainPage"
                 android:text="main menu"
+                android:textSize="20dp"
                 tools:layout_editor_absoluteX="211dp"
                 tools:layout_editor_absoluteY="202dp" />
 
             <Button
                 android:id="@+id/retryButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toEndOf="@id/emptyView"
+                android:onClick="clickRetry"
                 android:text="retry"
+                android:textSize="20dp"
                 tools:layout_editor_absoluteX="379dp"
                 tools:layout_editor_absoluteY="206dp" />
 
-        </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/finish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#F3E6DEDE"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/finishText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="FINISH \n Congratulation"
+            android:textColor="#FCFFB700"
+            android:textSize="80dp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="399dp"
+            tools:layout_editor_absoluteY="330dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="90dp">
+
+            <TextView
+                android:id="@+id/emptyView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textSize="8sp" />
+
+            <Button
+                android:id="@+id/mainPageButton2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toStartOf="@id/emptyView2"
+                android:onClick="clickMainPage"
+                android:text="main menu"
+                android:textSize="20dp"
+                tools:layout_editor_absoluteX="211dp"
+                tools:layout_editor_absoluteY="202dp" />
+
+            <Button
+                android:id="@+id/retryButton2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toEndOf="@id/emptyView2"
+                android:onClick="clickRetry"
+                android:text="retry"
+                android:textSize="20dp"
+                tools:layout_editor_absoluteX="379dp"
+                tools:layout_editor_absoluteY="206dp" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 

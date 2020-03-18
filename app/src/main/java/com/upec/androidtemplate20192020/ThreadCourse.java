@@ -64,12 +64,14 @@ public class ThreadCourse implements Runnable {
                 Rect p = new Rect(posPlayer-55, (int)posPlayerY-220, posPlayer+55, (int)posPlayerY);
                 if (Rect.intersects(obst.getRect(), p)) {
                     update(i, true, obst);
-                    /*try {
-                        Thread.sleep(5000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    for(int k=0; k < 3; k++) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                    break;*/
+                    break;
                 }
                 obst.setY(obst.getY() + 10 + (speed*30));
             }

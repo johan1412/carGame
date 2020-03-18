@@ -1,13 +1,16 @@
 package com.upec.androidtemplate20192020;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -85,8 +88,10 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
             }
         });
 
-        LinearLayout gameOverText = findViewById(R.id.gameOver);
-        gameOverText.setVisibility(View.INVISIBLE);
+        LinearLayout gameOver = findViewById(R.id.gameOver);
+        gameOver.setVisibility(View.INVISIBLE);
+        LinearLayout finish = findViewById(R.id.finish);
+        finish.setVisibility(View.INVISIBLE);
         AlertDialog.Builder alert = new AlertDialog.Builder(CourseActivity.this);
         alert.setCancelable(false);
         alert.setTitle("INFORMATIONS");
@@ -140,11 +145,11 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
 
     public void setFinish() {
+        LinearLayout finish = findViewById(R.id.finish);
+        finish.setVisibility(View.VISIBLE);
         timerThread.interrupt();
         chrono.stop();
         courseThread.interrupt();
-        String s = "Finish \n Gagné";
-        tv.setText(s);
         this.fin = true;
     }
 
@@ -178,6 +183,7 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
         gameOverText.setVisibility(View.VISIBLE);
         timerThread.interrupt();
         chrono.stop();
+        onPause();
         courseThread.interrupt();
         this.fin = true;
     }
@@ -185,22 +191,14 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
 
     public void relance() {
-        //this.course = new ThreadCourse(this, view.getWidth(), view.getHeight(), getResources(), testMode);
         tv.setText("Accident ! \n -1 vie");
-        try {
-            courseThread.sleep(2000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        tv.setText("");
-        /*Handler handler = new Handler();
+        final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                courseThread = new Thread(course);
-                courseThread.start();
+                tv.setText("");
             }
-        }, 2000);*/
+        }, 2000);
     }
 
 
@@ -233,6 +231,28 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
             case 2 : ecran.setBackgroundResource(R.drawable.map_course2); tourMap++; break;
             case 3 : ecran.setBackgroundResource(R.drawable.map_course3); tourMap = 1; break;
         }
+    }
+
+
+
+    public void clickMainPage(View v) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+
+
+    public void clickRetry(View v) {
+        Intent intent = new Intent(this, CourseActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("level", level);
+        if(testMode) {
+            intent.putExtra("test", 1);
+        } else {
+            intent.putExtra("test", 0);
+        }
+        startActivity(intent);
     }
 
 
@@ -291,9 +311,6 @@ public class CourseActivity extends AppCompatActivity implements SensorEventList
 
 
     private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
